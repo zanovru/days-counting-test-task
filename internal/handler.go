@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"math"
@@ -9,7 +10,7 @@ import (
 	"time"
 )
 
-// GetDays serializes counted days from url parameter into response body
+// GetDays writes counted days from url parameter into response body
 func GetDays(c *gin.Context) {
 	year, err := strconv.Atoi(c.Param("year"))
 	if err != nil || year == 0 {
@@ -18,21 +19,21 @@ func GetDays(c *gin.Context) {
 		return
 	}
 	days := countDays(year)
-	c.JSON(http.StatusOK, days)
+	c.String(http.StatusOK, days)
 }
 
 func PageNotFound(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{"message": "You can only use '/when/:year' url in this app"})
 }
 
-func countDays(year int) gin.H {
+func countDays(year int) string {
 	paramDate := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
 	now := time.Now()
 	formattedNow := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	difference := int(math.Abs(paramDate.Sub(formattedNow).Hours() / 24))
 	if paramDate.Before(formattedNow) {
-		return gin.H{"Days gone": difference}
+		return fmt.Sprintf("Days gone: %s", strconv.Itoa(difference))
 	} else {
-		return gin.H{"Days left": difference}
+		return fmt.Sprintf("Days left: %s", strconv.Itoa(difference))
 	}
 }
