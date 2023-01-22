@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-// GetDays
+// GetDays serializes counted days from url parameter into response body
 func GetDays(c *gin.Context) {
 	year, err := strconv.Atoi(c.Param("year"))
 	if err != nil || year == 0 {
